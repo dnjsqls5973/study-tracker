@@ -1,0 +1,30 @@
+package com.wonbin.study_tracker.domain.log.repository;
+
+import com.wonbin.study_tracker.domain.log.entity.ActivityLog;
+import com.wonbin.study_tracker.domain.log.entity.BrowserLog;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+public interface BrowserLogRepository extends JpaRepository<BrowserLog, Long> {
+
+    List<BrowserLog> findBySessionId(Long sessionId);
+
+    // 특정 기간 딴짓 앱 Top 조회
+
+    @Query("SELECT b.domain, SUM(b.durationSec) As total " +
+            "FROM BrowserLog b " +
+            "WHERE b.session.user.id = :userId " +
+            "AND b.startedAt BETWEEN :start AND :end " +
+            "AND b.category = 'DISTRACT' " +
+            "GROUP BY b.domain " +
+            "ORDER BY total DESC")
+    List<Object[]> findTopDistractDomains(
+            @Param("userId") Long userId,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end);
+
+}
