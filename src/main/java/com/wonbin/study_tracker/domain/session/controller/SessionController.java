@@ -77,6 +77,14 @@ public class SessionController {
         return ResponseEntity.ok(sessionService.getSession(userId, sessionId));
     }
 
+    // 세션 노트 조회
+    @GetMapping("/{sessionId}/notes")
+    public ResponseEntity<List<SessionResponse.LogNote>> getNotes(
+            @AuthenticationPrincipal Long userId,
+            @PathVariable Long sessionId) {
+        return ResponseEntity.ok(sessionService.getNotes(userId, sessionId));
+    }
+
     // 세션 로그 요약 조회 (팝업 데이터)
     @GetMapping("/{sessionId}/log-summary")
     public ResponseEntity<List<SessionResponse.LogSummaryItem>> getLogSummary(

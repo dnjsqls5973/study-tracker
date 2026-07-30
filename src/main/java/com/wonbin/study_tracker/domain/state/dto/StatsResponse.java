@@ -1,5 +1,6 @@
 package com.wonbin.study_tracker.domain.state.dto;
 
+import com.wonbin.study_tracker.domain.session.dto.SessionResponse;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -17,6 +18,9 @@ public class StatsResponse {
         private int totalDistractSec;
         private int sessionCount;
         private List<DistractItem> topDistracts;
+        private List<SessionResponse.LogNote> recentNotes;   // 가장 최근 종료 세션의 노트 목록
+        private List<DistractItem> studyDetails;             // 오늘 앱/도메인별 순공 시간 상세
+        private List<DistractItem> distractDetails;          // 오늘 앱/도메인별 딴짓 시간 상세
     }
 
     // 딴짓 앱/도메인 항목
@@ -60,5 +64,32 @@ public class StatsResponse {
         private int totalStudySec;
         private int totalDistractSec;
         private int sessionCount;
+    }
+
+    // 날짜별 공부 메모 요약 항목
+    @Getter
+    @Builder
+    public static class StudyNoteItem {
+        private String logValue;
+        private String category;
+        private String memo;
+    }
+
+    // 세션별 공부 메모 그룹
+    @Getter
+    @Builder
+    public static class SessionNoteGroup {
+        private Long sessionId;
+        private String studyType;
+        private List<StudyNoteItem> notes;
+    }
+
+    // 날짜별 노트 요약 (주별/월별 노트 요약용)
+    @Getter
+    @Builder
+    public static class NoteDailySummary {
+        private LocalDate date;
+        private int totalStudySec;
+        private List<SessionNoteGroup> sessions;
     }
 }

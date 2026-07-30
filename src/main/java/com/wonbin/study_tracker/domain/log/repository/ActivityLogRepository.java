@@ -26,4 +26,18 @@ public interface ActivityLogRepository extends JpaRepository<ActivityLog, Long> 
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end);
 
+    // 특정 기간 카테고리별 앱 시간 집계 (STUDY/DISTRACT 공용)
+    @Query("SELECT a.appName, SUM(a.durationSec) As total " +
+            "FROM ActivityLog a " +
+            "WHERE a.session.user.id = :userId " +
+            "AND a.startedAt BETWEEN :start AND :end " +
+            "AND a.category = :category " +
+            "GROUP BY a.appName " +
+            "ORDER BY total DESC")
+    List<Object[]> findTopAppsByCategory(
+            @Param("userId") Long userId,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end,
+            @Param("category") String category);
+
 }

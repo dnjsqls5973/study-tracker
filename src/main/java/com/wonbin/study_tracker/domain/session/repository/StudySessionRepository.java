@@ -13,6 +13,8 @@ import java.util.Optional;
 public interface StudySessionRepository extends JpaRepository<StudySession, Long> {
     Optional<StudySession> findByUserIdAndEndedAtIsNull(Long userId);
 
+    Optional<StudySession> findFirstByUserIdAndEndedAtIsNotNullOrderByEndedAtDesc(Long userId);
+
     List<StudySession> findByUserIdAndStartedAtBetweenOrderByStartedAtAsc(Long userId, LocalDateTime start, LocalDateTime end);
 
     @Query("SELECT COALESCE(SUM(s.studySec), 0) FROM StudySession s " +

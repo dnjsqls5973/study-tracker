@@ -27,4 +27,18 @@ public interface BrowserLogRepository extends JpaRepository<BrowserLog, Long> {
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end);
 
+    // 특정 기간 카테고리별 도메인 시간 집계 (STUDY/DISTRACT 공용)
+    @Query("SELECT b.domain, SUM(b.durationSec) As total " +
+            "FROM BrowserLog b " +
+            "WHERE b.session.user.id = :userId " +
+            "AND b.startedAt BETWEEN :start AND :end " +
+            "AND b.category = :category " +
+            "GROUP BY b.domain " +
+            "ORDER BY total DESC")
+    List<Object[]> findTopDomainsByCategory(
+            @Param("userId") Long userId,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end,
+            @Param("category") String category);
+
 }

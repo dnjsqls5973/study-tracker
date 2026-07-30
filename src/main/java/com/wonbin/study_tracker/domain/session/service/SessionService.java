@@ -111,6 +111,16 @@ public class SessionService {
         return SessionResponse.Detail.from(getSessionByUser(userId, sessionId));
     }
 
+    // 세션 노트 조회
+    @Transactional(readOnly = true)
+    public List<SessionResponse.LogNote> getNotes(Long userId, Long sessionId) {
+        getSessionByUser(userId, sessionId); // 접근 권한 검증
+
+        return sessionLogNoteRepository.findBySessionId(sessionId).stream()
+                .map(SessionResponse.LogNote::from)
+                .toList();
+    }
+
     // 진행 중인 세션 조회
     @Transactional(readOnly = true)
     public Optional<SessionResponse.Detail> getActiveSessionOrEmpty(Long userId) {

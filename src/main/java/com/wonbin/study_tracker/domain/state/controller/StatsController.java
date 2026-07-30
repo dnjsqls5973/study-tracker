@@ -34,6 +34,15 @@ public class StatsController {
         return ResponseEntity.ok(statSService.getSessions(userId, date));
     }
 
+    // 달력용 월별 순공 시간 (날짜: 초 단위 순공 시간, 공부한 날만 포함)
+    @GetMapping("/calendar")
+    public ResponseEntity<java.util.Map<String, Integer>> getCalendar(
+            @AuthenticationPrincipal Long userId,
+            @RequestParam int year,
+            @RequestParam int month) {
+        return ResponseEntity.ok(statSService.getCalendar(userId, year, month));
+    }
+
     // 주간 통계
     @GetMapping("/weekly")
     public ResponseEntity<List<StatsResponse.DailyStat>> getWeekly(
@@ -49,5 +58,22 @@ public class StatsController {
             @RequestParam int year,
             @RequestParam int month) {
         return ResponseEntity.ok(statSService.getMonthlyStats(userId, year, month));
+    }
+
+    // 주별 노트 요약
+    @GetMapping("/weekly-notes")
+    public ResponseEntity<List<StatsResponse.NoteDailySummary>> getWeeklyNotes(
+            @AuthenticationPrincipal Long userId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate) {
+        return ResponseEntity.ok(statSService.getWeeklyNotes(userId, startDate));
+    }
+
+    // 월별 노트 요약
+    @GetMapping("/monthly-notes")
+    public ResponseEntity<List<StatsResponse.NoteDailySummary>> getMonthlyNotes(
+            @AuthenticationPrincipal Long userId,
+            @RequestParam int year,
+            @RequestParam int month) {
+        return ResponseEntity.ok(statSService.getMonthlyNotes(userId, year, month));
     }
 }
