@@ -36,6 +36,9 @@ dependencies {
 	implementation 'com.google.api-client:google-api-client:2.9.0'
 	implementation 'com.google.http-client:google-http-client-gson:2.1.0'
 
+	// Firebase (push notifications)
+	implementation 'com.google.firebase:firebase-admin:9.10.0'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.batch:spring-batch-test'
 	testImplementation 'org.springframework.security:spring-security-test'
