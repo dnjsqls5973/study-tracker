@@ -1,32 +1,20 @@
 package com.wonbin.study_tracker.api.auth;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
 public class AuthRequest {
 
     @Getter
-    public static class Register {
+    public static class GoogleIdTokenLogin {
         @NotBlank
-        @Email
-        private String email;
-
-        @NotBlank
-        private String name;
-
-        @NotBlank
-        private String password;
+        private String idToken;
     }
 
     @Getter
-    public static class Login {
+    public static class GoogleAccessTokenLogin {
         @NotBlank
-        @Email
-        private String email;
-
-        @NotBlank
-        private String password;
+        private String accessToken;
     }
 
     @Getter
@@ -36,5 +24,14 @@ public class AuthRequest {
 
         @NotBlank
         private String deviceType;
+    }
+
+    @Getter
+    public static class PushTokenUpdate {
+        @NotBlank
+        private String deviceId;
+
+        @NotBlank
+        private String pushToken;
     }
 }
