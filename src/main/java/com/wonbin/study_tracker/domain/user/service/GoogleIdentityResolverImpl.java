@@ -2,7 +2,6 @@ package com.wonbin.study_tracker.domain.user.service;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -11,14 +10,21 @@ import org.springframework.web.client.RestClientException;
 import java.util.Map;
 
 @Component
-@RequiredArgsConstructor
 public class GoogleIdentityResolverImpl implements GoogleIdentityResolver {
 
     private final GoogleIdTokenVerifier googleIdTokenVerifier;
     private final RestClient googleRestClient;
-
-    @Value("${google.oauth.extension-client-id}")
     private final String extensionClientId;
+
+    public GoogleIdentityResolverImpl(
+            GoogleIdTokenVerifier googleIdTokenVerifier,
+            RestClient googleRestClient,
+            @Value("${google.oauth.extension-client-id}") String extensionClientId
+    ) {
+        this.googleIdTokenVerifier = googleIdTokenVerifier;
+        this.googleRestClient = googleRestClient;
+        this.extensionClientId = extensionClientId;
+    }
 
     @Override
     public GoogleIdentity resolveFromIdToken(String idToken) {
