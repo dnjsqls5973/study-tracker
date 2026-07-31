@@ -5,3 +5,7 @@ spring:
 
 jwt:
   secret: your_base64_encoded_jwt_secret_at_least_32_bytes
+
+google:
+  oauth:
+    client-id: your_google_oauth_web_client_id.apps.googleusercontent.com
