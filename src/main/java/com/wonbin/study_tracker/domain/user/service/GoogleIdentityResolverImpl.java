@@ -5,6 +5,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientException;
 
 import java.util.Map;
 
@@ -39,11 +40,16 @@ public class GoogleIdentityResolverImpl implements GoogleIdentityResolver {
     @Override
     @SuppressWarnings("unchecked")
     public GoogleIdentity resolveFromAccessToken(String accessToken) {
-        Map<String, Object> userInfo = googleRestClient.get()
-                .uri("https://www.googleapis.com/oauth2/v3/userinfo")
-                .header("Authorization", "Bearer " + accessToken)
-                .retrieve()
-                .body(Map.class);
+        Map<String, Object> userInfo;
+        try {
+            userInfo = googleRestClient.get()
+                    .uri("https://www.googleapis.com/oauth2/v3/userinfo")
+                    .header("Authorization", "Bearer " + accessToken)
+                    .retrieve()
+                    .body(Map.class);
+        } catch (RestClientException e) {
+            throw new IllegalArgumentException("유효하지 않은 Google 액세스 토큰입니다.", e);
+        }
 
         if (userInfo == null || userInfo.get("sub") == null) {
             throw new IllegalArgumentException("유효하지 않은 Google 액세스 토큰입니다.");
