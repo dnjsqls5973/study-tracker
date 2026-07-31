@@ -15,6 +15,7 @@ import com.wonbin.study_tracker.domain.user.entity.User;
 import com.wonbin.study_tracker.domain.user.repository.UserRepository;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -30,7 +31,7 @@ public class SessionService {
     private final BrowserLogRepository browserLogRepository;
     private final SessionLogNoteRepository sessionLogNoteRepository;
     private final ClassificationService classificationService;
-    private final SessionEventBroadcaster sessionEventBroadcaster;
+    private final ApplicationEventPublisher eventPublisher;
 
     // 세션 시작
     @Transactional
@@ -57,7 +58,7 @@ public class SessionService {
                 .build();
 
         sessionRepository.save(session);
-        sessionEventBroadcaster.broadcast(userId, SessionEventType.STARTED, session.getId());
+        eventPublisher.publishEvent(new SessionEventBroadcastRequested(userId, SessionEventType.STARTED, session.getId()));
         return SessionResponse.Detail.from(session);
     }
 
@@ -69,7 +70,7 @@ public class SessionService {
         validateSessionNotEnded(session);
 
         session.end(isAutoEnded);  // studySec/distractSec은 이미 실시간으로 누적되어 있음
-        sessionEventBroadcaster.broadcast(userId, SessionEventType.ENDED, sessionId);
+        eventPublisher.publishEvent(new SessionEventBroadcastRequested(userId, SessionEventType.ENDED, sessionId));
 
         return SessionResponse.Detail.from(session);
     }
@@ -83,7 +84,7 @@ public class SessionService {
 
         // pause 시각을 기록하기 위해 pausedAt을 세션에 저장할 수도 있지만
         // MVP에서는 클라이언트가 resume 시 경과 시간을 보내는 방식으로 처리
-        sessionEventBroadcaster.broadcast(userId, SessionEventType.PAUSED, sessionId);
+        eventPublisher.publishEvent(new SessionEventBroadcastRequested(userId, SessionEventType.PAUSED, sessionId));
 
         return SessionResponse.Detail.from(session);
     }
@@ -96,7 +97,7 @@ public class SessionService {
         validateSessionNotEnded(session);
 
         session.addPauseSec(pauseSec);
-        sessionEventBroadcaster.broadcast(userId, SessionEventType.RESUMED, sessionId);
+        eventPublisher.publishEvent(new SessionEventBroadcastRequested(userId, SessionEventType.RESUMED, sessionId));
         return SessionResponse.Detail.from(session);
     }
 

@@ -5,7 +5,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -13,7 +13,7 @@ import java.util.Map;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@ConditionalOnBean(FirebaseMessaging.class)
+@ConditionalOnProperty(prefix = "firebase", name = "credentials-path")
 public class FirebaseCloudMessagingSender implements PushMessageSender {
 
     private final FirebaseMessaging firebaseMessaging;

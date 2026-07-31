@@ -14,13 +14,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,13 +32,13 @@ class SessionServiceBroadcastTest {
     @Mock private BrowserLogRepository browserLogRepository;
     @Mock private SessionLogNoteRepository sessionLogNoteRepository;
     @Mock private ClassificationService classificationService;
-    @Mock private SessionEventBroadcaster sessionEventBroadcaster;
+    @Mock private ApplicationEventPublisher eventPublisher;
 
     @InjectMocks
     private SessionService sessionService;
 
     @Test
-    void 세션_시작_시_STARTED_이벤트를_브로드캐스트한다() {
+    void 세션_시작_시_STARTED_브로드캐스트_이벤트를_발행한다() {
         User user = User.builder().id(1L).email("a@a.com").name("A").googleId("g1").dayChangeHour(5).build();
 
         when(sessionRepository.findByUserIdAndEndedAtIsNull(1L)).thenReturn(Optional.empty());
@@ -55,11 +55,11 @@ class SessionServiceBroadcastTest {
 
         sessionService.start(1L, request);
 
-        verify(sessionEventBroadcaster).broadcast(eq(1L), eq(SessionEventType.STARTED), eq(200L));
+        verify(eventPublisher).publishEvent(new SessionEventBroadcastRequested(1L, SessionEventType.STARTED, 200L));
     }
 
     @Test
-    void 세션_종료_시_ENDED_이벤트를_브로드캐스트한다() throws Exception {
+    void 세션_종료_시_ENDED_브로드캐스트_이벤트를_발행한다() throws Exception {
         User user = User.builder().id(1L).email("a@a.com").name("A").googleId("g1").dayChangeHour(5).build();
         StudySession session = StudySession.builder()
                 .user(user)
@@ -74,7 +74,7 @@ class SessionServiceBroadcastTest {
 
         sessionService.end(1L, 200L, false);
 
-        verify(sessionEventBroadcaster).broadcast(eq(1L), eq(SessionEventType.ENDED), eq(200L));
+        verify(eventPublisher).publishEvent(new SessionEventBroadcastRequested(1L, SessionEventType.ENDED, 200L));
     }
 
     private void setId(StudySession session, Long id) throws Exception {

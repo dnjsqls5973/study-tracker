@@ -20,11 +20,18 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class GoogleIdentityResolverImplTest {
 
+    private static final String EXTENSION_CLIENT_ID = "test-extension-client-id";
+    private static final String TOKEN_INFO_URI = "https://oauth2.googleapis.com/tokeninfo?access_token={token}";
+
     @Mock
     private GoogleIdTokenVerifier googleIdTokenVerifier;
 
     @Mock
     private RestClient googleRestClient;
+
+    private GoogleIdentityResolverImpl resolver() {
+        return new GoogleIdentityResolverImpl(googleIdTokenVerifier, googleRestClient, EXTENSION_CLIENT_ID);
+    }
 
     @Test
     void ID_토큰이_유효하면_GoogleIdentity를_반환한다() throws Exception {
@@ -37,10 +44,7 @@ class GoogleIdentityResolverImplTest {
         when(token.getPayload()).thenReturn(payload);
         when(googleIdTokenVerifier.verify("valid-id-token")).thenReturn(token);
 
-        GoogleIdentityResolverImpl resolver =
-                new GoogleIdentityResolverImpl(googleIdTokenVerifier, googleRestClient);
-
-        GoogleIdentity identity = resolver.resolveFromIdToken("valid-id-token");
+        GoogleIdentity identity = resolver().resolveFromIdToken("valid-id-token");
 
         assertThat(identity.googleId()).isEqualTo("google-sub-123");
         assertThat(identity.email()).isEqualTo("test@example.com");
@@ -51,10 +55,7 @@ class GoogleIdentityResolverImplTest {
     void ID_토큰이_유효하지_않으면_예외를_던진다() throws Exception {
         when(googleIdTokenVerifier.verify("invalid-token")).thenReturn(null);
 
-        GoogleIdentityResolverImpl resolver =
-                new GoogleIdentityResolverImpl(googleIdTokenVerifier, googleRestClient);
-
-        assertThatThrownBy(() -> resolver.resolveFromIdToken("invalid-token"))
+        assertThatThrownBy(() -> resolver().resolveFromIdToken("invalid-token"))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -65,26 +66,22 @@ class GoogleIdentityResolverImplTest {
         RestClient.RequestHeadersSpec headersSpec = mock(RestClient.RequestHeadersSpec.class);
         RestClient.ResponseSpec responseSpec = mock(RestClient.ResponseSpec.class);
 
-        Map<String, Object> userInfo = Map.of(
+        Map<String, Object> tokenInfo = Map.of(
                 "sub", "google-sub-456",
                 "email", "access@example.com",
-                "name", "액세스유저"
+                "aud", EXTENSION_CLIENT_ID
         );
 
         when(googleRestClient.get()).thenReturn(uriSpec);
-        when(uriSpec.uri("https://www.googleapis.com/oauth2/v3/userinfo")).thenReturn(headersSpec);
-        when(headersSpec.header("Authorization", "Bearer valid-access-token")).thenReturn(headersSpec);
+        when(uriSpec.uri(TOKEN_INFO_URI, "valid-access-token")).thenReturn(headersSpec);
         when(headersSpec.retrieve()).thenReturn(responseSpec);
-        when(responseSpec.body(Map.class)).thenReturn(userInfo);
+        when(responseSpec.body(Map.class)).thenReturn(tokenInfo);
 
-        GoogleIdentityResolverImpl resolver =
-                new GoogleIdentityResolverImpl(googleIdTokenVerifier, googleRestClient);
-
-        GoogleIdentity identity = resolver.resolveFromAccessToken("valid-access-token");
+        GoogleIdentity identity = resolver().resolveFromAccessToken("valid-access-token");
 
         assertThat(identity.googleId()).isEqualTo("google-sub-456");
         assertThat(identity.email()).isEqualTo("access@example.com");
-        assertThat(identity.name()).isEqualTo("액세스유저");
+        assertThat(identity.name()).isNull();
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -95,15 +92,34 @@ class GoogleIdentityResolverImplTest {
         RestClient.ResponseSpec responseSpec = mock(RestClient.ResponseSpec.class);
 
         when(googleRestClient.get()).thenReturn(uriSpec);
-        when(uriSpec.uri("https://www.googleapis.com/oauth2/v3/userinfo")).thenReturn(headersSpec);
-        when(headersSpec.header("Authorization", "Bearer invalid-access-token")).thenReturn(headersSpec);
+        when(uriSpec.uri(TOKEN_INFO_URI, "invalid-access-token")).thenReturn(headersSpec);
         when(headersSpec.retrieve()).thenReturn(responseSpec);
-        when(responseSpec.body(Map.class)).thenThrow(new HttpClientErrorException(HttpStatus.UNAUTHORIZED));
+        when(responseSpec.body(Map.class)).thenThrow(new HttpClientErrorException(HttpStatus.BAD_REQUEST));
 
-        GoogleIdentityResolverImpl resolver =
-                new GoogleIdentityResolverImpl(googleIdTokenVerifier, googleRestClient);
-
-        assertThatThrownBy(() -> resolver.resolveFromAccessToken("invalid-access-token"))
+        assertThatThrownBy(() -> resolver().resolveFromAccessToken("invalid-access-token"))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Test
+    void 다른_클라이언트에서_발급된_액세스_토큰이면_예외를_던진다() {
+        RestClient.RequestHeadersUriSpec uriSpec = mock(RestClient.RequestHeadersUriSpec.class);
+        RestClient.RequestHeadersSpec headersSpec = mock(RestClient.RequestHeadersSpec.class);
+        RestClient.ResponseSpec responseSpec = mock(RestClient.ResponseSpec.class);
+
+        Map<String, Object> tokenInfo = Map.of(
+                "sub", "google-sub-789",
+                "email", "victim@example.com",
+                "aud", "other-app-client-id.apps.googleusercontent.com"
+        );
+
+        when(googleRestClient.get()).thenReturn(uriSpec);
+        when(uriSpec.uri(TOKEN_INFO_URI, "foreign-access-token")).thenReturn(headersSpec);
+        when(headersSpec.retrieve()).thenReturn(responseSpec);
+        when(responseSpec.body(Map.class)).thenReturn(tokenInfo);
+
+        assertThatThrownBy(() -> resolver().resolveFromAccessToken("foreign-access-token"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("허용되지 않은 클라이언트");
     }
 }
