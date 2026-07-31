@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Table(name = "Users")
@@ -24,8 +23,8 @@ public class User {
     @Column(nullable = false, length = 100)
     private String name;
 
-    @Column(name= "password_hash", nullable = false, length = 255)
-    private String passwordHash;
+    @Column(name = "google_id", nullable = false, unique = true, length = 255)
+    private String googleId;
 
     @Column(name = "day_change_hour", nullable = false)
     private int dayChangeHour = 5;

@@ -7,11 +7,12 @@ CREATE TABLE IF NOT EXISTS users (
      id                  BIGINT          NOT NULL AUTO_INCREMENT,
      email               VARCHAR(255)    NOT NULL,
     name                VARCHAR(100)    NOT NULL,
-    password_hash       VARCHAR(255)    NOT NULL,
+    google_id           VARCHAR(255)    NOT NULL,
     day_change_hour     TINYINT         NOT NULL DEFAULT 5,
     created_at          DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_users_email (email)
+    UNIQUE KEY uk_users_email (email),
+    UNIQUE KEY uk_users_google_id (google_id)
     );
 
 -- 2. 기기
