@@ -74,4 +74,17 @@ public class AuthService {
                 .deviceId(device.getId())
                 .build();
     }
+
+    // 기기 push 토큰 등록/갱신
+    @Transactional
+    public void registerPushToken(Long userId, AuthRequest.PushTokenUpdate request) {
+        Device device = deviceRepository.findById(Long.parseLong(request.getDeviceId()))
+                .orElseThrow(() -> new IllegalArgumentException("기기를 찾을 수 없습니다."));
+
+        if (!device.getUser().getId().equals(userId)) {
+            throw new IllegalArgumentException("접근 권한이 없습니다.");
+        }
+
+        device.updatePushToken(request.getPushToken());
+    }
 }

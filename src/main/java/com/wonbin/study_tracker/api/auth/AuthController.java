@@ -35,4 +35,12 @@ public class AuthController {
         return ResponseEntity.ok(authService.registerDevice(userId, register));
     }
 
+    @PatchMapping("/device/push-token")
+    public ResponseEntity<Void> registerPushToken(
+            @AuthenticationPrincipal Long userId,
+            @Valid @RequestBody AuthRequest.PushTokenUpdate request) {
+        authService.registerPushToken(userId, request);
+        return ResponseEntity.noContent().build();
+    }
+
 }

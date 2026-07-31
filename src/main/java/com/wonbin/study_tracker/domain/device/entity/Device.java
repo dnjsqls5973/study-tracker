@@ -31,10 +31,17 @@ public class Device {
     @Column(name = "device_token", nullable = false, unique = true, length = 255)
     private String deviceToken;
 
+    @Column(name = "push_token", length = 500)
+    private String pushToken;
+
     @Column(name = "last_seen")
     private LocalDateTime lastSeen;
 
     public void updateLastSeen() {
         this.lastSeen = LocalDateTime.now();
+    }
+
+    public void updatePushToken(String pushToken) {
+        this.pushToken = pushToken;
     }
 }
