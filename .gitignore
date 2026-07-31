@@ -40,3 +40,6 @@ out/
 ### Local secrets ###
 application-local.yaml
 application-local.yml
+
+### Internal planning docs (not for GitHub) ###
+docs/superpowers/
