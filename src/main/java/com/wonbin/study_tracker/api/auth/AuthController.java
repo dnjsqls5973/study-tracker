@@ -3,12 +3,9 @@ package com.wonbin.study_tracker.api.auth;
 import com.wonbin.study_tracker.domain.user.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 
 @RestController
 @RequestMapping("/api/auth")
@@ -17,16 +14,18 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("/register")
-    public ResponseEntity<AuthResponse.Token> register(
-            @Valid @RequestBody AuthRequest.Register request) {
-        return ResponseEntity.ok(authService.register(request));
+    // 웹: Google Identity Services에서 받은 ID 토큰으로 로그인
+    @PostMapping("/google")
+    public ResponseEntity<AuthResponse.Token> loginWithGoogleIdToken(
+            @Valid @RequestBody AuthRequest.GoogleIdTokenLogin request) {
+        return ResponseEntity.ok(authService.loginWithGoogleIdToken(request.getIdToken()));
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<AuthResponse.Token> login(
-            @Valid @RequestBody AuthRequest.Login request) {
-        return ResponseEntity.ok(authService.login(request));
+    // Chrome Extension: chrome.identity.getAuthToken()으로 받은 액세스 토큰으로 로그인
+    @PostMapping("/google/token")
+    public ResponseEntity<AuthResponse.Token> loginWithGoogleAccessToken(
+            @Valid @RequestBody AuthRequest.GoogleAccessTokenLogin request) {
+        return ResponseEntity.ok(authService.loginWithGoogleAccessToken(request.getAccessToken()));
     }
 
     @PostMapping("/device")
