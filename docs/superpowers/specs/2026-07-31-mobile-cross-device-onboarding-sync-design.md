@@ -100,7 +100,15 @@ Study Tracker는 PC 에이전트 + Chrome Extension으로 PC 사용을 자동 �
 | `study-tracker-web` React 코드베이스 (iOS PWA로 확장) | Android 네이티브 프로젝트 (Kotlin, 신규) |
 | `devices.device_type` 스키마 | `devices.push_token` 컬럼 |
 
-## 7. 열린 질문 (후속 브레인스토밍 대상)
+## 7. 전제 조건: Chrome Extension 인증 지속성
+
+이 설계 전체가 "기기 등록은 최초 1회, 이후 `device_token`으로 계속 인증됨"을 전제로 한다. 그런데 테스트 중 Chrome Extension의 로그인이 반복적으로 풀리는 문제가 발견되었다. Extension이 로그아웃 상태가 되면 `browser_logs` 수집이 조용히 중단되어, PC 에이전트 쪽 추적은 정상인데 브라우저 딴짓만 누락되는 식으로 정확도가 깨질 수 있다.
+
+이 설계를 신뢰성 있게 동작시키려면 구현 단계에서 다음을 함께 처리해야 한다:
+- Extension이 왜 로그아웃되는지 원인 진단 (device_token 만료 없음이 맞다면, access token 갱신 실패·저장소 초기화·CORS/쿠키 정책 등이 의심 지점)
+- 재발 방지 조치 (예: device_token을 이용한 인증이면 만료 자체가 없어야 하므로, 실제로 어떤 토큰/세션이 풀리는지 먼저 확인 필요)
+
+## 8. 열린 질문 (후속 브레인스토밍 대상)
 
 - 모바일(특히 iOS PWA)로 처음 접근하는 신규 가입자의 온보딩 플로우는 어떻게 설계할 것인가.
 - iOS PWA의 백그라운드 동작 제약(브라우저 정책 변경 리스크 포함)이 장기적으로 얼마나 신뢰할 수 있는지 검증 필요.
