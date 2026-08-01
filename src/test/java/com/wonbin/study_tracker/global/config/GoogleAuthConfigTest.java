@@ -15,4 +15,11 @@ class GoogleAuthConfigTest {
 
         assertThat(verifier.getAudience()).containsExactlyInAnyOrder("web-client-id", "pc-agent-client-id");
     }
+
+    @Test
+    void PC_에이전트_클라이언트_ID가_빈_문자열이면_audience에서_제외된다() {
+        GoogleIdTokenVerifier verifier = config.googleIdTokenVerifier("web-client-id", "");
+
+        assertThat(verifier.getAudience()).containsExactly("web-client-id");
+    }
 }
