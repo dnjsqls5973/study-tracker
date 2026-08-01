@@ -8,16 +8,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
 
-import java.util.Collections;
+import java.util.List;
 
 @Configuration
 public class GoogleAuthConfig {
 
     @Bean
     public GoogleIdTokenVerifier googleIdTokenVerifier(
-            @Value("${google.oauth.client-id}") String clientId) {
+            @Value("${google.oauth.client-id}") String clientId,
+            @Value("${google.oauth.pc-agent-client-id}") String pcAgentClientId) {
         return new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), GsonFactory.getDefaultInstance())
-                .setAudience(Collections.singletonList(clientId))
+                .setAudience(List.of(clientId, pcAgentClientId))
                 .build();
     }
 

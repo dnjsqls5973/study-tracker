@@ -10,6 +10,7 @@ google:
   oauth:
     client-id: your_google_oauth_web_client_id.apps.googleusercontent.com
     extension-client-id: your_google_oauth_chrome_extension_client_id.apps.googleusercontent.com
+    pc-agent-client-id: your_google_oauth_desktop_app_client_id.apps.googleusercontent.com
 
 # Firebase push 알림을 실제로 보내려면 아래 주석을 풀고 서비스 계정 키 경로를 지정한다.
 # 설정하지 않으면 NoopPushMessageSender가 자동으로 대신 동작한다.

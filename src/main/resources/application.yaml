@@ -44,3 +44,4 @@ google:
   oauth:
     client-id: ${GOOGLE_OAUTH_CLIENT_ID}
     extension-client-id: ${GOOGLE_OAUTH_EXTENSION_CLIENT_ID}
+    pc-agent-client-id: ${GOOGLE_OAUTH_PC_AGENT_CLIENT_ID}
