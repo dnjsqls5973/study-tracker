@@ -30,7 +30,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/auth/google",
-                                "/api/auth/google/token"
+                                "/api/auth/google/token",
+                                "/actuator/health"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
