@@ -72,3 +72,23 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:latest" >> "$GITHUB_OUTPUT"
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd ~/study-tracker
+            set -a
+            source .env
+            set +a
+            aws ecr get-login-password --region ap-northeast-2 | \
+              docker login --username AWS --password-stdin $(echo $APP_IMAGE | cut -d/ -f1)
+            docker compose pull
+            docker compose up -d
+            docker image prune -f
