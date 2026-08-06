@@ -41,6 +41,12 @@ jobs:
           cache: gradle
 
       - name: Run tests
+        env:
+          DB_USERNAME: tracker
+          DB_PASSWORD: tracker1234
+          JWT_SECRET: ZG9ja2VyLWxvY2FsLXRlc3Qtand0LXNlY3JldC1rZXktbm90LWZvci1wcm9kdWN0aW9uLXVzZQ==
+          GOOGLE_OAUTH_CLIENT_ID: test-client-id.apps.googleusercontent.com
+          GOOGLE_OAUTH_EXTENSION_CLIENT_ID: test-extension-client-id.apps.googleusercontent.com
         run: ./gradlew test
 
       - name: Build boot jar
