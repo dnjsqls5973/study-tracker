@@ -83,6 +83,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            set -e
             cd ~/study-tracker
             set -a
             source .env
