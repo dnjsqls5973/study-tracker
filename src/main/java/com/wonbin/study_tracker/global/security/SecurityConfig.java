@@ -5,6 +5,7 @@ import com.wonbin.study_tracker.global.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -33,6 +34,7 @@ public class SecurityConfig {
                                 "/api/auth/google/token",
                                 "/actuator/health"
                         ).permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/users/me").hasAuthority("ROLE_ACCESS")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(
