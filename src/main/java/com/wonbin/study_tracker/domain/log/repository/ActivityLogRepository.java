@@ -2,6 +2,7 @@ package com.wonbin.study_tracker.domain.log.repository;
 
 import com.wonbin.study_tracker.domain.log.entity.ActivityLog;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -12,7 +13,9 @@ public interface ActivityLogRepository extends JpaRepository<ActivityLog, Long> 
 
     List<ActivityLog> findBySessionId(Long sessionId);
 
-    void deleteBySessionUserId(Long userId);
+    @Modifying
+    @Query("DELETE FROM ActivityLog a WHERE a.session.id IN (SELECT s.id FROM StudySession s WHERE s.user.id = :userId)")
+    void deleteBySessionUserId(@Param("userId") Long userId);
 
     // 특정 기간 딴짓 앱 Top 조회
 

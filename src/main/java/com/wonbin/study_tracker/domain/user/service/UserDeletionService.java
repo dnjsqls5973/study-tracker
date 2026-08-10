@@ -25,6 +25,7 @@ public class UserDeletionService {
 
     @Transactional
     public void deleteAccount(Long userId) {
+        userRepository.deleteTimeBlocksByUserId(userId);
         activityLogRepository.deleteBySessionUserId(userId);
         browserLogRepository.deleteBySessionUserId(userId);
         sessionLogNoteRepository.deleteBySessionUserId(userId);

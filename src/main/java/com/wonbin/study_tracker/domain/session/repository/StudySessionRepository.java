@@ -1,8 +1,8 @@
 package com.wonbin.study_tracker.domain.session.repository;
 
 import com.wonbin.study_tracker.domain.session.entity.StudySession;
-import com.wonbin.study_tracker.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -26,7 +26,7 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end);
 
-    Long user(User user);
-
-    void deleteByUserId(Long userId);
+    @Modifying
+    @Query("DELETE FROM StudySession s WHERE s.user.id = :userId")
+    void deleteByUserId(@Param("userId") Long userId);
 }

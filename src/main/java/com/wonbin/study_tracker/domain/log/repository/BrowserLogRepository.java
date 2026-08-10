@@ -3,6 +3,7 @@ package com.wonbin.study_tracker.domain.log.repository;
 import com.wonbin.study_tracker.domain.log.entity.ActivityLog;
 import com.wonbin.study_tracker.domain.log.entity.BrowserLog;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -13,7 +14,9 @@ public interface BrowserLogRepository extends JpaRepository<BrowserLog, Long> {
 
     List<BrowserLog> findBySessionId(Long sessionId);
 
-    void deleteBySessionUserId(Long userId);
+    @Modifying
+    @Query("DELETE FROM BrowserLog b WHERE b.session.id IN (SELECT s.id FROM StudySession s WHERE s.user.id = :userId)")
+    void deleteBySessionUserId(@Param("userId") Long userId);
 
     // 특정 기간 딴짓 앱 Top 조회
 
