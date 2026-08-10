@@ -12,6 +12,8 @@ public interface ActivityLogRepository extends JpaRepository<ActivityLog, Long> 
 
     List<ActivityLog> findBySessionId(Long sessionId);
 
+    void deleteBySessionUserId(Long userId);
+
     // 특정 기간 딴짓 앱 Top 조회
 
     @Query("SELECT a.appName, SUM(a.durationSec) As total " +

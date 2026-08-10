@@ -8,4 +8,5 @@ import java.util.List;
 public interface SessionLogNoteRepository extends JpaRepository<SessionLogNote, Long> {
     List<SessionLogNote> findBySessionId(Long sessionId);
     void deleteBySessionId(Long sessionId);
+    void deleteBySessionUserId(Long userId);
 }

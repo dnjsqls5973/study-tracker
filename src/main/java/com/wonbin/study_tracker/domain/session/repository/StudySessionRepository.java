@@ -27,4 +27,6 @@ public interface StudySessionRepository extends JpaRepository<StudySession, Long
             @Param("end") LocalDateTime end);
 
     Long user(User user);
+
+    void deleteByUserId(Long userId);
 }

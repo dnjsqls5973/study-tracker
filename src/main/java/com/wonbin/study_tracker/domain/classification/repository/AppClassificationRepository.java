@@ -16,4 +16,6 @@ public interface AppClassificationRepository extends JpaRepository<AppClassifica
 
     // 중복 확인
     boolean existsByUserIdAndTypeAndValue(Long userId, String type, String value);
+
+    void deleteByUserId(Long userId);
 }

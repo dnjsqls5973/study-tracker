@@ -13,6 +13,8 @@ public interface BrowserLogRepository extends JpaRepository<BrowserLog, Long> {
 
     List<BrowserLog> findBySessionId(Long sessionId);
 
+    void deleteBySessionUserId(Long userId);
+
     // 특정 기간 딴짓 앱 Top 조회
 
     @Query("SELECT b.domain, SUM(b.durationSec) As total " +
