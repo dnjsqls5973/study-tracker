@@ -34,4 +34,10 @@ public class AuthRequest {
         @NotBlank
         private String pushToken;
     }
+
+    @Getter
+    public static class RefreshTokenRequest {
+        @NotBlank
+        private String refreshToken;
+    }
 }
