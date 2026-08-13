@@ -37,4 +37,8 @@ public class User {
         this.createdAt = LocalDateTime.now();
     }
 
+    public void updateDayChangeHour(int dayChangeHour) {
+        this.dayChangeHour = dayChangeHour;
+    }
+
 }
