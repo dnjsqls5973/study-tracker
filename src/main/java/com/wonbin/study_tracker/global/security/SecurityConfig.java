@@ -35,6 +35,7 @@ public class SecurityConfig {
                                 "/actuator/health"
                         ).permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/users/me").hasAuthority("ROLE_ACCESS")
+                        .requestMatchers(HttpMethod.PATCH, "/api/users/me/day-change-hour").hasAuthority("ROLE_ACCESS")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(
