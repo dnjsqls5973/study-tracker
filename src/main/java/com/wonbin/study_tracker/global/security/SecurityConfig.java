@@ -32,6 +32,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/auth/google",
                                 "/api/auth/google/token",
+                                "/api/auth/refresh",
                                 "/actuator/health"
                         ).permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/users/me").hasAuthority("ROLE_ACCESS")

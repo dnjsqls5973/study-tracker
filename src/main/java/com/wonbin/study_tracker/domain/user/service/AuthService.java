@@ -7,6 +7,7 @@ import com.wonbin.study_tracker.domain.device.repository.DeviceRepository;
 import com.wonbin.study_tracker.domain.user.entity.User;
 import com.wonbin.study_tracker.domain.user.repository.UserRepository;
 import com.wonbin.study_tracker.global.security.jwt.JwtProvider;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,5 +87,32 @@ public class AuthService {
         }
 
         device.updatePushToken(request.getPushToken());
+    }
+
+    // REFRESH 토큰으로 새 ACCESS 토큰 재발급 (REFRESH 토큰은 재발급하지 않음)
+    @Transactional(readOnly = true)
+    public AuthResponse.Token refreshAccessToken(String refreshToken) {
+        String tokenType;
+        Long userId;
+        try {
+            tokenType = jwtProvider.getTokenType(refreshToken);
+            userId = jwtProvider.getUserId(refreshToken);
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+        }
+
+        if (!"REFRESH".equals(tokenType)) {
+            throw new IllegalArgumentException("REFRESH 토큰이 아닙니다.");
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        return AuthResponse.Token.builder()
+                .accessToken(jwtProvider.generateAccessToken(user.getId(), user.getEmail()))
+                .refreshToken(refreshToken)
+                .userId(user.getId())
+                .name(user.getName())
+                .build();
     }
 }
