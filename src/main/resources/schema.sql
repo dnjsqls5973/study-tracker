@@ -85,25 +85,7 @@ CREATE TABLE IF NOT EXISTS browser_logs (
     FOREIGN KEY (device_id) REFERENCES devices (id)
     );
 
--- 6. 5분 블록 집계 (Spring Batch 생성, 대시보드 조회용)
-CREATE TABLE IF NOT EXISTS time_blocks (
-    id                  BIGINT          NOT NULL AUTO_INCREMENT,
-    user_id             BIGINT          NOT NULL,
-    session_id          BIGINT          NOT NULL,
-    block_start         DATETIME        NOT NULL,
-    category            VARCHAR(10)     NOT NULL COMMENT 'STUDY / DISTRACT / IDLE',
-    study_sec           INT             NOT NULL DEFAULT 0,
-    distract_sec        INT             NOT NULL DEFAULT 0,
-    idle_sec            INT             NOT NULL DEFAULT 0,
-    is_manual_edited    TINYINT(1)      NOT NULL DEFAULT 0,
-    PRIMARY KEY (id),
-    UNIQUE KEY uk_time_block (user_id, block_start),
-    INDEX idx_time_block_user_time (user_id, block_start),
-    FOREIGN KEY (user_id) REFERENCES users (id),
-    FOREIGN KEY (session_id) REFERENCES study_sessions (id)
-    );
-
--- 7. 사용자 분류 커스터마이즈
+-- 6. 사용자 분류 커스터마이즈
 CREATE TABLE IF NOT EXISTS app_classifications (
     id          BIGINT          NOT NULL AUTO_INCREMENT,
     user_id     BIGINT          NOT NULL,
@@ -115,7 +97,7 @@ CREATE TABLE IF NOT EXISTS app_classifications (
     FOREIGN KEY (user_id) REFERENCES users (id)
     );
 
--- 8. 세션 로그 메모 (팝업 완료 시 저장)
+-- 7. 세션 로그 메모 (팝업 완료 시 저장)
 CREATE TABLE IF NOT EXISTS session_log_notes (
                                                  id          BIGINT          NOT NULL AUTO_INCREMENT,
                                                  session_id  BIGINT          NOT NULL,

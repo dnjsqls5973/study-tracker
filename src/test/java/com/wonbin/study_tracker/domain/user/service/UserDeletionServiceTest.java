@@ -38,7 +38,6 @@ class UserDeletionServiceTest {
                 activityLogRepository, browserLogRepository, sessionLogNoteRepository,
                 studySessionRepository, deviceRepository, appClassificationRepository, userRepository
         );
-        order.verify(userRepository).deleteTimeBlocksByUserId(1L);
         order.verify(activityLogRepository).deleteBySessionUserId(1L);
         order.verify(browserLogRepository).deleteBySessionUserId(1L);
         order.verify(sessionLogNoteRepository).deleteBySessionUserId(1L);
