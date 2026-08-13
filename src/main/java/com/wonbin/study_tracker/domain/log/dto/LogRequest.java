@@ -61,16 +61,4 @@ public class LogRequest {
         private int durationSec;
     }
 
-    @Getter
-    public static class FocusEvent {
-        @NotNull
-        private Long deviceId;
-
-        @NotBlank
-        private String event; // FOCUS_START or FOCUS_END
-
-        @NotNull
-        private LocalDateTime timestamp;
-    }
-
 }
