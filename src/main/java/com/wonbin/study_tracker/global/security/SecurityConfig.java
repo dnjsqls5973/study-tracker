@@ -37,6 +37,8 @@ public class SecurityConfig {
                         ).permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/users/me").hasAuthority("ROLE_ACCESS")
                         .requestMatchers(HttpMethod.PATCH, "/api/users/me/day-change-hour").hasAuthority("ROLE_ACCESS")
+                        .requestMatchers("/api/classifications/**").hasAuthority("ROLE_ACCESS")
+                        .requestMatchers("/api/stats/**").hasAuthority("ROLE_ACCESS")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(
