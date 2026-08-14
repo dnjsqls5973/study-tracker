@@ -17,8 +17,6 @@ public interface ActivityLogRepository extends JpaRepository<ActivityLog, Long> 
     @Query("DELETE FROM ActivityLog a WHERE a.session.id IN (SELECT s.id FROM StudySession s WHERE s.user.id = :userId)")
     void deleteBySessionUserId(@Param("userId") Long userId);
 
-    // 특정 기간 딴짓 앱 Top 조회
-
     @Query("SELECT a.appName, SUM(a.durationSec) As total " +
             "FROM ActivityLog a " +
             "WHERE a.session.user.id = :userId " +
@@ -31,7 +29,6 @@ public interface ActivityLogRepository extends JpaRepository<ActivityLog, Long> 
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end);
 
-    // 특정 기간 카테고리별 앱 시간 집계 (STUDY/DISTRACT 공용)
     @Query("SELECT a.appName, SUM(a.durationSec) As total " +
             "FROM ActivityLog a " +
             "WHERE a.session.user.id = :userId " +

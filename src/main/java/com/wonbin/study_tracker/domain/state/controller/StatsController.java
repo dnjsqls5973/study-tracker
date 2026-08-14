@@ -19,14 +19,12 @@ public class StatsController {
 
     private final StatsService statSService;
 
-    // 오늘 요약
     @GetMapping("/today")
     public ResponseEntity<StatsResponse.TodaySummary> getToday(
             @AuthenticationPrincipal Long userId) {
         return ResponseEntity.ok(statSService.getTodaySummary(userId));
     }
 
-    // 특정 날 세션 목록
     @GetMapping("sessions")
     public ResponseEntity<List<StatsResponse.SessionSummary>> getSessions(
             @AuthenticationPrincipal Long userId,
@@ -43,7 +41,6 @@ public class StatsController {
         return ResponseEntity.ok(statSService.getCalendar(userId, year, month));
     }
 
-    // 주간 통계
     @GetMapping("/weekly")
     public ResponseEntity<List<StatsResponse.DailyStat>> getWeekly(
             @AuthenticationPrincipal Long userId,
@@ -51,7 +48,6 @@ public class StatsController {
         return ResponseEntity.ok(statSService.getWeeklyStats(userId, startDate));
     }
 
-    // 월간 통계
     @GetMapping("/monthly")
     public ResponseEntity<List<StatsResponse.DailyStat>> getMonthly(
             @AuthenticationPrincipal Long userId,
@@ -60,7 +56,6 @@ public class StatsController {
         return ResponseEntity.ok(statSService.getMonthlyStats(userId, year, month));
     }
 
-    // 주별 노트 요약
     @GetMapping("/weekly-notes")
     public ResponseEntity<List<StatsResponse.NoteDailySummary>> getWeeklyNotes(
             @AuthenticationPrincipal Long userId,
@@ -68,7 +63,6 @@ public class StatsController {
         return ResponseEntity.ok(statSService.getWeeklyNotes(userId, startDate));
     }
 
-    // 월별 노트 요약
     @GetMapping("/monthly-notes")
     public ResponseEntity<List<StatsResponse.NoteDailySummary>> getMonthlyNotes(
             @AuthenticationPrincipal Long userId,

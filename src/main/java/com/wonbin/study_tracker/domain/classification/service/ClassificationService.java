@@ -24,7 +24,6 @@ public class ClassificationService {
     private final UserRepository userRepository;
 
 
-    // <Custom> 분류 규칙 추가
     @Transactional
     public ClassificationResponse create(Long userId, ClassificationRequest.Create request) {
         if (classificationRepository.existsByUserIdAndTypeAndValue(
@@ -46,7 +45,6 @@ public class ClassificationService {
         return ClassificationResponse.from(classification);
     }
 
-    // <Custom> 분류 규칙 수정
     @Transactional
     public ClassificationResponse update(Long userId, Long id, ClassificationRequest.Update request) {
         AppClassification classification = classificationRepository.findById(id)
@@ -60,7 +58,6 @@ public class ClassificationService {
         return ClassificationResponse.from(classification);
     }
 
-    // <Custom> 분류 규칙 삭제
     @Transactional
     public void delete(Long userId, Long id) {
         AppClassification classification = classificationRepository.findById(id)
@@ -73,7 +70,6 @@ public class ClassificationService {
         classificationRepository.delete(classification);
     }
 
-    // <Custom> 목록 조회 (응답 DTO로 변환)
     @Transactional(readOnly = true)
     public java.util.List<ClassificationResponse> getList(Long userId) {
         return getUserClassifications(userId).stream()
@@ -83,7 +79,6 @@ public class ClassificationService {
 
     // 도메인 목록은 추후 수정이 필요해보임(06.17)
 
-    // 기본 STUDY 도메인 목록
     private static final Set<String> DEFAULT_STUDY_DOMAINS = Set.of(
             "github.com", "stackoverflow.com", "inflearn.com",
             "velog.io", "notion.so", "medium.com", "docs.spring.io",
@@ -91,63 +86,52 @@ public class ClassificationService {
             "programmers.co.kr", "baekjoon.net", "acmicpc.net"
     );
 
-    // 기본 DISTRACT 도메인 목록
     private static final Set<String> DEFAULT_DISTRACT_DOMAINS = Set.of(
             "instagram.com", "youtube.com", "tiktok.com",
             "netflix.com", "twitter.com", "x.com", "facebook.com",
             "twitch.tv", "naver.com", "daum.net"
     );
 
-    // 기본 NEUTRAL 앱 목록
     private static final Set<String> DEFAULT_NEUTRAL_APPS = Set.of(
             "Spotify.exe", "YouTubeMusic.exe",
             "Clock.exe", "Calculator.exe"
     );
 
-    // 기본 STUDY 앱 목록
     private static final Set<String> DEFAULT_STUDY_APPS = Set.of(
             "Code.exe", "idea64.exe", "devenv.exe",
             "Notion.exe", "Obsidian.exe", "pycharm64.exe",
             "WebStorm64.exe", "DataGrip64.exe"
     );
 
-    // 기본 DISTRACT 앱 목록
     private static final Set<String> DEFAULT_DISTRACT_APPS = Set.of(
             "KakaoTalk.exe", "Discord.exe", "Steam.exe"
     );
 
-    // 도메인 분류 (브라우저 로그용)
     public String classifyDomain(Long userId, String domain) {
-        // 1. 사용자 커스텀 규칙 우선 적용
         Optional<AppClassification> custom = classificationRepository.findByUserIdAndTypeAndValue(userId, "DOMAIN", domain);
         if (custom.isPresent()) {
             return custom.get().getCategory();
         }
 
-        // 2. 기본 규칙 적용
         if(DEFAULT_STUDY_DOMAINS.contains(domain)) return "STUDY";
         if(DEFAULT_DISTRACT_DOMAINS.contains(domain)) return "DISTRACT";
 
         return "NEUTRAL";
     }
 
-    // 앱 분류(activity 로그용)
     public String classifyApp (Long userId, String appName, boolean isIdle, String studyType) {
 
-        // 유후 상태 처리
         if(isIdle) {
-            //오프라인 공부면 유후 = 공부
+            //오프라인 공부면 유휴 = 공부
             if("OFFLINE".equals(studyType)) return "STUDY";
             return "IDLE";
         }
 
-        // 1. 사용자 커스텀 규칙 우선 적용
         Optional<AppClassification> custom = classificationRepository.findByUserIdAndTypeAndValue(userId, "APP", appName);
         if (custom.isPresent()) {
             return custom.get().getCategory();
         }
 
-        // 2. 기본 규칙 적용
         if (DEFAULT_STUDY_APPS.contains(appName)) return "STUDY";
         if (DEFAULT_DISTRACT_APPS.contains(appName)) return "DISTRACT";
         if (DEFAULT_NEUTRAL_APPS.contains(appName)) return "NEUTRAL";
@@ -155,7 +139,6 @@ public class ClassificationService {
         return "NEUTRAL";
     }
 
-    // 사용자 분류 규칙 목록 조회
     public List<AppClassification> getUserClassifications(Long userId) {
         return classificationRepository.findByUserId(userId);
     }

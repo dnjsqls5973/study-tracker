@@ -43,7 +43,6 @@ public class AuthController {
         return ResponseEntity.noContent().build();
     }
 
-    // REFRESH 토큰으로 새 ACCESS 토큰 재발급
     @PostMapping("/refresh")
     public ResponseEntity<AuthResponse.Token> refresh(
             @Valid @RequestBody AuthRequest.RefreshTokenRequest request) {

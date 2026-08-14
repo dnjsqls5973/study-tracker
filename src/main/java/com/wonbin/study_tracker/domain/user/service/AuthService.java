@@ -53,7 +53,6 @@ public class AuthService {
                 .build();
     }
 
-    // device Token 발급
     @Transactional
     public AuthResponse.DeviceToken registerDevice(Long userId, AuthRequest.DeviceRegister request) {
         User user = userRepository.findById(userId)
@@ -76,7 +75,6 @@ public class AuthService {
                 .build();
     }
 
-    // 기기 push 토큰 등록/갱신
     @Transactional
     public void registerPushToken(Long userId, AuthRequest.PushTokenUpdate request) {
         Device device = deviceRepository.findById(Long.parseLong(request.getDeviceId()))
@@ -89,7 +87,7 @@ public class AuthService {
         device.updatePushToken(request.getPushToken());
     }
 
-    // REFRESH 토큰으로 새 ACCESS 토큰 재발급 (REFRESH 토큰은 재발급하지 않음)
+    // REFRESH 토큰은 재발급하지 않고 그대로 반환한다
     @Transactional(readOnly = true)
     public AuthResponse.Token refreshAccessToken(String refreshToken) {
         String tokenType;

@@ -18,8 +18,6 @@ public interface BrowserLogRepository extends JpaRepository<BrowserLog, Long> {
     @Query("DELETE FROM BrowserLog b WHERE b.session.id IN (SELECT s.id FROM StudySession s WHERE s.user.id = :userId)")
     void deleteBySessionUserId(@Param("userId") Long userId);
 
-    // 특정 기간 딴짓 앱 Top 조회
-
     @Query("SELECT b.domain, SUM(b.durationSec) As total " +
             "FROM BrowserLog b " +
             "WHERE b.session.user.id = :userId " +
@@ -32,7 +30,6 @@ public interface BrowserLogRepository extends JpaRepository<BrowserLog, Long> {
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end);
 
-    // 특정 기간 카테고리별 도메인 시간 집계 (STUDY/DISTRACT 공용)
     @Query("SELECT b.domain, SUM(b.durationSec) As total " +
             "FROM BrowserLog b " +
             "WHERE b.session.user.id = :userId " +

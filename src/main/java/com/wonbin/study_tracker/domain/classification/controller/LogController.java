@@ -20,7 +20,6 @@ public class LogController {
 
     private final LogService logService;
 
-    // 앱 활동 로그 배치 수신
     @PostMapping("/activity-logs")
     public ResponseEntity<Map<String, Integer>> saveActivityLogs(
             @AuthenticationPrincipal Long userId,

@@ -10,7 +10,6 @@ import java.util.List;
 
 public class StatsResponse {
 
-    // 오늘 요약
     @Getter
     @Builder
     public static class TodaySummary {
@@ -19,11 +18,10 @@ public class StatsResponse {
         private int sessionCount;
         private List<DistractItem> topDistracts;
         private List<SessionResponse.LogNote> recentNotes;   // 가장 최근 종료 세션의 노트 목록
-        private List<DistractItem> studyDetails;             // 오늘 앱/도메인별 순공 시간 상세
-        private List<DistractItem> distractDetails;          // 오늘 앱/도메인별 딴짓 시간 상세
+        private List<DistractItem> studyDetails;
+        private List<DistractItem> distractDetails;
     }
 
-    // 딴짓 앱/도메인 항목
     @Getter
     @Builder
     public static class DistractItem {
@@ -31,7 +29,6 @@ public class StatsResponse {
         private int totalSec;
     }
 
-    // 타임라인 블록
     @Getter
     @Builder
     public static class TimelineBlock {
@@ -43,7 +40,6 @@ public class StatsResponse {
         private boolean isManualEdited;
     }
 
-    // 세션 요약
     @Getter
     @Builder
     public static class SessionSummary {
@@ -56,7 +52,6 @@ public class StatsResponse {
         private int totalSec;
     }
 
-    // 일별 통계 (주간/월간용)
     @Getter
     @Builder
     public static class DailyStat {
@@ -66,7 +61,6 @@ public class StatsResponse {
         private int sessionCount;
     }
 
-    // 날짜별 공부 메모 요약 항목
     @Getter
     @Builder
     public static class StudyNoteItem {
@@ -75,7 +69,6 @@ public class StatsResponse {
         private String memo;
     }
 
-    // 세션별 공부 메모 그룹
     @Getter
     @Builder
     public static class SessionNoteGroup {
@@ -84,7 +77,6 @@ public class StatsResponse {
         private List<StudyNoteItem> notes;
     }
 
-    // 날짜별 노트 요약 (주별/월별 노트 요약용)
     @Getter
     @Builder
     public static class NoteDailySummary {

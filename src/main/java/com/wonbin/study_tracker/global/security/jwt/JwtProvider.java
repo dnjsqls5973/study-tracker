@@ -27,7 +27,6 @@ public class JwtProvider {
         this.refreshTokenExpiration = refreshTokenExpiration;
     }
 
-    //AccessToken 생성
     public String generateAccessToken(Long userId, String email) {
         return Jwts.builder()
                 .subject(String.valueOf(userId))
@@ -39,7 +38,6 @@ public class JwtProvider {
                 .compact();
     }
 
-    // RefreshToken 생성
     public String generateRefreshToken(Long userId) {
         return Jwts.builder()
                 .subject(String.valueOf(userId))
@@ -50,7 +48,7 @@ public class JwtProvider {
                 .compact();
     }
 
-    // Device Token 생성(Expiration X)
+    // Device Token은 만료 시각(Expiration)을 설정하지 않는다
     public String generateDeviceToken(Long userId, String deviceName) {
         return Jwts.builder()
                 .subject(String.valueOf(userId))
@@ -61,17 +59,14 @@ public class JwtProvider {
                 .compact();
     }
 
-    //토큰에서 UserId 추출
     public Long getUserId(String token) {
         return Long.parseLong(getClaims(token).getSubject());
     }
 
-    //토큰 타입 확인
     public String getTokenType(String token) {
         return (String) getClaims(token).get("type");
     }
 
-    //토큰 유효성 검증
     public boolean validateToken(String token) {
         try {
             getClaims(token);

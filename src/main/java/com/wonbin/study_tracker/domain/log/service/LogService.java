@@ -29,7 +29,6 @@ public class LogService {
     private final ClassificationService classificationService;
 
 
-    // 앱 활동 로그 배치 저장
     @Transactional
     public int saveActivityLogs(Long userId, LogRequest.ActivityBatch request) {
         StudySession session = getSessionForLogging(request.getSessionId(), userId);

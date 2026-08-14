@@ -21,7 +21,7 @@ public class SessionRequest {
     @Getter
     public static class Extend {
         @Min(60)
-        private int additionalSec; // 연장할 시간 (Second)
+        private int additionalSec;
     }
 
     @Getter

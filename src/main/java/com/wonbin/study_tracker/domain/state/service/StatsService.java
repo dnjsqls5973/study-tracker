@@ -41,12 +41,10 @@ public class StatsService {
         return new LocalDateTime[]{start, end};
     }
 
-    // 오늘 요약
     @Transactional(readOnly = true)
     public StatsResponse.TodaySummary getTodaySummary(Long userId) {
         LocalDateTime[] range = getDayRange(userId, LocalDate.now());
 
-        // 세션 목록
         List<StudySession> sessions = sessionRepository.findByUserIdAndStartedAtBetweenOrderByStartedAtAsc(
                 userId, range[0], range[1]);
 
@@ -55,7 +53,6 @@ public class StatsService {
         int totalDistractSec = sessions.stream()
                 .mapToInt(StudySession::getDistractSec).sum();
 
-        // 오늘 앱/도메인별 순공/딴짓 시간 상세
         List<StatsResponse.DistractItem> studyDetails = collectDetailsByCategory(userId, range, "STUDY");
         List<StatsResponse.DistractItem> distractDetails = collectDetailsByCategory(userId, range, "DISTRACT");
 
@@ -70,7 +67,6 @@ public class StatsService {
                 .build();
     }
 
-    // 특정 기간 카테고리(STUDY/DISTRACT)별 앱+도메인 시간 상세 (시간 내림차순)
     private List<StatsResponse.DistractItem> collectDetailsByCategory(
             Long userId, LocalDateTime[] range, String category) {
         List<StatsResponse.DistractItem> details = new ArrayList<>();
@@ -93,7 +89,6 @@ public class StatsService {
         return details;
     }
 
-    // 가장 최근 종료된 세션의 노트 목록
     private List<SessionResponse.LogNote> getRecentNotes(Long userId) {
         return sessionRepository.findFirstByUserIdAndEndedAtIsNotNullOrderByEndedAtDesc(userId)
                 .map(session -> sessionLogNoteRepository.findBySessionId(session.getId()).stream()
@@ -102,7 +97,6 @@ public class StatsService {
                 .orElse(List.of());
     }
 
-    // 특정 날 세션 목록
     @Transactional(readOnly = true)
     public List<StatsResponse.SessionSummary> getSessions(Long userId, LocalDate date) {
         LocalDateTime[] range = getDayRange(userId, date);
@@ -123,7 +117,6 @@ public class StatsService {
                 .collect(Collectors.toList());
     }
 
-    // 주간 통계
     public List<StatsResponse.DailyStat> getWeeklyStats(Long userId, LocalDate startDate) {
         List<StatsResponse.DailyStat> result = new ArrayList<>();
 
@@ -151,7 +144,6 @@ public class StatsService {
         return result;
     }
 
-    // 주별 노트 요약 (startDate부터 7일)
     @Transactional(readOnly = true)
     public List<StatsResponse.NoteDailySummary> getWeeklyNotes(Long userId, LocalDate startDate) {
         List<StatsResponse.NoteDailySummary> result = new ArrayList<>();
@@ -161,7 +153,6 @@ public class StatsService {
         return result;
     }
 
-    // 월별 노트 요약
     @Transactional(readOnly = true)
     public List<StatsResponse.NoteDailySummary> getMonthlyNotes(Long userId, int year, int month) {
         LocalDate startDate = LocalDate.of(year, month, 1);
@@ -174,7 +165,6 @@ public class StatsService {
         return result;
     }
 
-    // 특정 날짜의 세션 + 공부(STUDY) 노트 요약 생성
     private StatsResponse.NoteDailySummary buildNoteDailySummary(Long userId, LocalDate date) {
         LocalDateTime[] range = getDayRange(userId, date);
 
@@ -234,7 +224,6 @@ public class StatsService {
         return result;
     }
 
-    // 월간 통계
     @Transactional(readOnly = true)
     public List<StatsResponse.DailyStat> getMonthlyStats(Long userId, int year, int month) {
         LocalDate startDate = LocalDate.of(year, month, 1);

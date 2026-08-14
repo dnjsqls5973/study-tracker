@@ -49,14 +49,12 @@ public class StudySession {
     @Column(name = "pause_sec", nullable = false)
     private int pauseSec;
 
-    //세션 종료
     public void end(boolean isAutoEnded) {
         this.endedAt = LocalDateTime.now();
         this.isAutoEnded = isAutoEnded;
         this.totalSec = (int) java.time.Duration.between(startedAt, endedAt).getSeconds() - pauseSec;
     }
 
-    //일시정시 시간 누적
     public void addPauseSec(int sec) {
         this.pauseSec += sec;
     }
@@ -70,13 +68,11 @@ public class StudySession {
         this.distractSec += sec;
     }
 
-    //순공 시간 업데이트
     public void updateStudySec(int studySec, int distractSec) {
         this.studySec = studySec;
         this.distractSec = distractSec;
     }
 
-    //목표 시간 연장
     public void extendTarget(int additionalSec) {
         if(this.targetSec != null) {
             this.targetSec += additionalSec;
