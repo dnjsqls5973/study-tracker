@@ -1,5 +1,6 @@
 package com.wonbin.study_tracker.domain.user.service;
 
+import com.wonbin.study_tracker.domain.user.dto.UserResponse;
 import com.wonbin.study_tracker.domain.user.entity.User;
 import com.wonbin.study_tracker.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+
+    @Transactional(readOnly = true)
+    public UserResponse.Me getMe(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        return UserResponse.Me.from(user);
+    }
 
     @Transactional
     public void updateDayChangeHour(Long userId, int dayChangeHour) {
